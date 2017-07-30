@@ -89,10 +89,8 @@ function sortPhoto(itemLabelsArray){
   itemLabelsArray.forEach((label) => {
     if (compost.indexOf(label.description) !== -1 && label.score >= 0.5) {
       destination = 'compost';
-      break;
     } else if (recycle.indexOf(label.description) !== -1 && label.score >= 0.5) {
-      destination = 'recycle'
-      break;
+      destination = 'recycle';
     }
   })
   console.log('DESTINATION: ', destination)
