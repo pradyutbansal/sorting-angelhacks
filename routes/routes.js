@@ -138,7 +138,7 @@ function simpleLabel(base64){
   {
     value: destination
   }).then(console.log).catch(console.log);
-    return destination;
+    return {destination};
 
 	}, (e) => {
 	  console.log('Error: ', e)
