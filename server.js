@@ -82,7 +82,7 @@ function labelPhoto(base64){
 }
 
 function sortPhoto(itemLabelsArray){
-  console.log(itemLabelsArray);
+  console.log('ARRAY: ', itemLabelsArray);
   const compost = ['fruit', 'produce', 'food', 'vegetable', 'local food', 'vegetarian food']
   const recycle = ['product', 'laundry supply', 'household supply', 'water bottle', 'plastic bottle', 'bottle', 'bottled water', 'glass bottle']
   let destination = 'trash'
@@ -95,7 +95,7 @@ function sortPhoto(itemLabelsArray){
       destination = 'recycle'
     }
   })
-  console.log(destination)
+  console.log('DESTINATION: ', destination)
   return destination;
 
 }
