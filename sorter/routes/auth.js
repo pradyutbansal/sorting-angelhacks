@@ -1,53 +1,23 @@
-// Add Passport-related auth routes here.
-var express = require('express');
-var router = express.Router();
-var models = require('../models');
+const express = require('express');
+const router = express.Router();
+const auth = require('../services/authentication');
+const bodyParser = require('body-parser');
 
-module.exports = function(passport) {
 
-  // GET registration page
-  router.get('/signup', function(req, res) {
-    res.render('signup');
-  });
+const User = require('../models/user');
 
-  router.post('/signup', function(req, res) {
-    // validation step
-    if (req.body.password!==req.body.passwordRepeat) {
-      return res.render('signup', {
-        error: "Passwords don't match."
-      });
-    }
-    var u = new models.User({
-      username: req.body.username,
-      password: req.body.password
-    });
-    u.save(function(err, user) {
-      if (err) {
-        console.log(err);
-        res.status(500).redirect('/register');
-        return;
-      }
-      console.log(user);
-      res.redirect('/login');
-    });
-  });
+/***************************** ROUTES *****************************/
 
-  // GET Login page
-  router.get('/login', function(req, res) {
-    res.render('login');
-  });
+router.get('/connect', (req, res) => {
+  auth.generateAuthUrl(req.query.auth_id).then(url => res.redirect(url));
+});
 
-  // POST Login page
-  router.post('/login', passport.authenticate('local',{
-    successRedirect: '/protected',
-    failureRedirect: '/login'
-  }));
+router.get('/connect/callback', (req, res) => {
+  const id = JSON.parse(decodeURIComponent(req.query.state)).auth_id;
+    auth.generateAuthTokens(req.query.code, id)
+    .then(() => res.send('Successfully Authenticated with Google! =D'))
+    .catch(() => res.send('Authentication with Google Failed! =('));
+});
 
-  // GET Logout page
-  router.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
-  });
 
-  return router;
-};
+module.exports = router;
