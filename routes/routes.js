@@ -92,6 +92,7 @@ router.get("/connect/callback", function (req, res) {
 });
 
 router.get('/andre', function(req, res) {
+  console.log(req.body);
   simpleLabel();
   res.send('hi bb');
 })
@@ -101,7 +102,6 @@ function simpleLabel(){
 	//console.log(" VISION IMAGE ", vision.images.annotate)
   // var fileName = __dirname + "/sorter/images/less_water.JPG"
   var fileName = path.join(__dirname, '../images/less_water.JPG');
-  console.log('FILE NAME: ', fileName);
 	// construct parameters
 	const req = new vision.Request({
     image: new vision.Image(fileName),
