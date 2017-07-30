@@ -84,14 +84,12 @@ function labelPhoto(base64){
 function sortPhoto(itemLabelsArray){
   console.log('ARRAY: ', itemLabelsArray);
   const compost = ['fruit', 'produce', 'food', 'vegetable', 'local food', 'vegetarian food']
-  const recycle = ['product', 'laundry supply', 'household supply', 'water bottle', 'plastic bottle', 'bottle', 'bottled water', 'glass bottle']
+  const recycle = ['aluminum can', 'cola', 'product', 'laundry supply', 'household supply', 'water bottle', 'plastic bottle', 'bottle', 'bottled water', 'glass bottle']
   let destination = 'trash'
   itemLabelsArray.forEach((label) => {
-    if(compost.indexOf(label.description) !== -1 && label.score >= 0.5){
+    if (compost.indexOf(label.description) !== -1 && label.score >= 0.5) {
       destination = 'compost'
-    }
-    else if(recycle.indexOf(label.description) !== -1 && label.score >= 0.5){
-
+    } else if (recycle.indexOf(label.description) !== -1 && label.score >= 0.5) {
       destination = 'recycle'
     }
   })
