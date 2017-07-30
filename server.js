@@ -5,6 +5,7 @@ const logger = require('morgan');
 const axios = require('axios');
 
 const port = process.env.PORT || 3000;
+const googleAPIKey = 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo';
 const app = express();
 
 
@@ -53,7 +54,7 @@ app.listen(port, function() {
 /* Helper function */
 function labelPhoto(base64){
   return new Promise((resolve, reject) =>{
-    vision.init({auth: 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo'})
+    vision.init({auth: googleAPIKey})
     // construct parameters
     const req = new vision.Request({
       image: new vision.Image({base64}),
