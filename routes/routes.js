@@ -93,10 +93,8 @@ router.get("/connect/callback", function (req, res) {
 });
 
 router.post('/andre', function(req, res) {
-  console.log(req.body);
-
   simpleLabel(req.body.image);
-  res.send('hi bb');
+  res.json({type: 'trash'});
 })
 
 function simpleLabel(base64){
@@ -138,7 +136,7 @@ function simpleLabel(base64){
   {
     value: destination
   }).then(console.log).catch(console.log);
-    return {destination};
+    return destination;
 
 	}, (e) => {
 	  console.log('Error: ', e)
