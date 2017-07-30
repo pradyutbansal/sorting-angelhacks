@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.post('/andre', function(req, res) {
   labelPhoto(req.body.image)
-  .then(type => res.json({type}))
+  .then(res.send)
   .catch(err => {
     console.log(err);
     res.send({type: 'error', error: err})
@@ -88,9 +88,11 @@ function sortPhoto(itemLabelsArray){
   let destination = 'trash'
   itemLabelsArray.forEach((label) => {
     if (compost.indexOf(label.description) !== -1 && label.score >= 0.5) {
-      destination = 'compost'
+      destination = 'compost';
+      break;
     } else if (recycle.indexOf(label.description) !== -1 && label.score >= 0.5) {
       destination = 'recycle'
+      break;
     }
   })
   console.log('DESTINATION: ', destination)
