@@ -91,11 +91,12 @@ router.get("/connect/callback", function (req, res) {
     });
 });
 
-router.get('/andre', function(req, res) {
+router.post('/andre', function(req, res) {
   console.log(req.body);
   simpleLabel();
   res.send('hi bb');
 })
+
 function simpleLabel(){
 	var vision = require('node-cloud-vision-api')
 	vision.init({auth: 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo'})
