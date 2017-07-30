@@ -6,6 +6,7 @@ var User = models.User;
 const path = require('path');
 const axios = require('axios');
 
+var base64 = require('node-base64-image');
 var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 
@@ -93,11 +94,12 @@ router.get("/connect/callback", function (req, res) {
 
 router.post('/andre', function(req, res) {
   console.log(req.body);
-  simpleLabel();
+
+  simpleLabel(req.body.image);
   res.send('hi bb');
 })
 
-function simpleLabel(){
+function simpleLabel(base64){
 	var vision = require('node-cloud-vision-api')
 	vision.init({auth: 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo'})
 	//console.log(" VISION IMAGE ", vision.images.annotate)
@@ -105,8 +107,8 @@ function simpleLabel(){
   var fileName = path.join(__dirname, '../images/less_water.JPG');
 	// construct parameters
 	const req = new vision.Request({
-    image: new vision.Image(fileName),
-	  //image: new vision.Image({url: fileName}),
+    // image: new vision.Image(fileName),
+	  image: new vision.Image({base64}),
 	  features: [
 	    new vision.Feature('LABEL_DETECTION', 10),
 	  ]

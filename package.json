@@ -21,6 +21,7 @@
     "mongoose-findorcreate": "^0.1.2",
     "morgan": "~1.6.1",
     "multer": "^1.1.0",
+    "node-base64-image": "^1.0.4",
     "node-cloud-vision-api": "^0.2.0",
     "nodemon": "^1.11.0",
     "passport": "^0.3.2",
