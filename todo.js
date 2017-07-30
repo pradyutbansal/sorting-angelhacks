@@ -15,6 +15,7 @@ const connect = process.env.MONGODB_URI;
 const axios = require('axios');
 
 const app = express();
+var vision = require('node-cloud-vision-api')
 
 
 /***************************** ROUTES *****************************/
@@ -69,52 +70,66 @@ module.exports = app;
 
 /* Helper function */
 function labelPhoto(){
-	var vision = require('node-cloud-vision-api')
-	vision.init({auth: 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo'})
-	//console.log(" VISION IMAGE ", vision.images.annotate)
-  // var fileName = __dirname + "/sorter/images/less_water.JPG"
-  var fileName = path.join(__dirname, '../sorting-angelhacks/images/less_water.JPG');
-  // var fileUri = '#'
-	// construct parameters
-	const req = new vision.Request({
-    image: new vision.Image(fileName),
-	  //image: new vision.Image({url: fileUri}),
-	  features: [
-	    new vision.Feature('LABEL_DETECTION', 10),
-	  ]
-	})
+  return new Promise((resolve, reject) =>{
+    vision.init({auth: 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo'})
+    var fileName = path.join(__dirname, '../sorting-angelhacks/images/less_water.JPG');
+    console.log("fileName: ", fileName)
+    // var fileUri = '#'
 
-	// send single request
-	vision.annotate(req).then((res) => {
-	  // handling response
-	  let destination = 'trash'
-    //console.log("RESPONSE: ", res.responses)
-    var itemMatches = (res.responses[0].labelAnnotations)
-
-    const compost = ['product', 'fruit', 'produce', 'food', 'vegetable', 'local food', 'vegetarian food']
-    const recycle = ['product', 'laundry supply', 'household supply', 'water bottle', 'plastic bottle', 'bottle', 'bottled water', 'glass bottle']
-    console.log("res.responses: ", res.responses[0].labelAnnotations) //array
-    res.responses[0].labelAnnotations.forEach((item) => {
-
-      if(compost.indexOf(item.description) !== -1 && item.score >= 0.85){
-        destination = 'compost'
-      }
-      else if(recycle.indexOf(item.description) !== -1 && item.score >= 0.85){
-        destination = 'recycle'
-      }
+    // construct parameters
+    const req = new vision.Request({
+      image: new vision.Image(fileName),
+      //image: new vision.Image({url: fileUri}),
+      features: [
+        new vision.Feature('LABEL_DETECTION', 10),
+      ]
     })
-    console.log("destination: ", destination)
 
-    axios.post('https://api.particle.io/v1/devices/200025001847343438323536/led?access_token=83488e0ae4449156570ffe3b9c0774c826ea6166',
-  {
-    value: destination
-  }).then(console.log).catch(console.log);
-    return destination;
+    // send single request
+    resolve (
+      vision.annotate(req).then((res) => {
+      // handling response
+      //console.log("RESPONSE: ", res.responses)
+      var itemMatches = (res.responses[0].labelAnnotations)
+      //console.log("res.responses: ", res.responses[0].labelAnnotations) //array
+      var destination = sortPhoto(itemMatches)
 
-	}, (e) => {
-	  console.log('Error: ', e)
-	})
+
+      axios.post('https://api.particle.io/v1/devices/200025001847343438323536/led?access_token=83488e0ae4449156570ffe3b9c0774c826ea6166',
+      {
+      value: destination
+      }).then().catch(console.log);
+      return destination;
+
+      }, (e) => {
+      console.log('Error: ', e)
+      })
+    )
+
+
+  })
+	
 }
+
+function sortPhoto(itemLabelsArray){
+  const compost = ['product', 'fruit', 'produce', 'food', 'vegetable', 'local food', 'vegetarian food']
+  const recycle = ['product', 'laundry supply', 'household supply', 'water bottle', 'plastic bottle', 'bottle', 'bottled water', 'glass bottle']
+  let destination = 'trash'
+  itemLabelsArray.forEach((label) => {
+    if(compost.indexOf(label.description) !== -1 && label.score >= 0.5){
+      destination = 'compost'
+    }
+    else if(recycle.indexOf(label.description) !== -1 && label.score >= 0.5){
+
+      destination = 'recycle'
+    }
+  })
+  console.log(destination)
+  return destination;
+
+}
+
+
 
 /* *********** SCHEMAS ********** */
 var imageSchema = mongoose.Schema({
