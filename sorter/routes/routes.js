@@ -3,6 +3,8 @@ var router = express.Router();
 var models = require('../models');
 var User = models.User;
 
+const path = require('path');
+const axios = require('axios');
 
 var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
@@ -78,7 +80,7 @@ router.get("/connect/callback", function (req, res) {
         simpleLabel(oauth2Client)
         res.redirect('/hi')
 
-        
+
       }
       else{
       	console.log(err)
@@ -89,12 +91,17 @@ router.get("/connect/callback", function (req, res) {
     });
 });
 
-
-function simpleLabel(auth){
+router.get('/andre', function(req, res) {
+  simpleLabel();
+  res.send('hi bb');
+})
+function simpleLabel(){
 	var vision = require('node-cloud-vision-api')
 	vision.init({auth: 'AIzaSyD3uyjc1W7J47G3o24Ez5fyBrNL4en0fwo'})
 	//console.log(" VISION IMAGE ", vision.images.annotate)
-	var fileName = "/Users/JCC/Desktop/horizons/sorting-angelhacks/sorter/images/less_water.JPG"
+  // var fileName = __dirname + "/sorter/images/less_water.JPG"
+  var fileName = path.join(__dirname, '../images/less_water.JPG');
+  console.log('FILE NAME: ', fileName);
 	// construct parameters
 	const req = new vision.Request({
     image: new vision.Image(fileName),
@@ -114,7 +121,7 @@ function simpleLabel(auth){
     const recycle = ['product', 'laundry supply', 'household supply', 'water bottle', 'plastic bottle', 'bottle', 'bottled water', 'glass bottle']
     console.log("res.responses: ", res.responses[0].labelAnnotations) //array
     res.responses[0].labelAnnotations.forEach((item) => {
-      
+
       if(compost.indexOf(item.description) !== -1 && item.score >= 0.85){
         destination = 'compost'
       }
@@ -123,6 +130,11 @@ function simpleLabel(auth){
       }
     })
     console.log("destination: ", destination)
+
+    axios.post('https://api.particle.io/v1/devices/200025001847343438323536/led?access_token=83488e0ae4449156570ffe3b9c0774c826ea6166',
+  {
+    value: destination
+  }).then(console.log).catch(console.log);
     return destination;
 
 	}, (e) => {

@@ -10,7 +10,7 @@ var LocalStrategy = require('passport-local');
 var mongoose = require('mongoose');
 var connect = process.env.MONGODB_URI;
 
-mongoose.connect(connect);
+// mongoose.connect(connect);
 
 var models = require('./models');
 
@@ -37,7 +37,7 @@ app.get('/connect', function(req,res){
        var googleAuth = getGoogleAuth();
        var url = googleAuth.generateAuthUrl({
          access_type: 'offline',
-         prompt: 'consent', 
+         prompt: 'consent',
          scope: GOOGLE_SCOPES,
          state: userId
        })
