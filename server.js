@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.post('/andre', function(req, res) {
   labelPhoto(req.body.image)
-  .then(res.send)
+  .then(resp => {console.log("RESP: ", resp); res.send(resp)})
   .catch(err => {
     console.log(err);
     res.send({type: 'error', error: err})
@@ -72,7 +72,8 @@ function labelPhoto(base64){
         var destination = sortPhoto(itemMatches)
         axios.post('https://api.particle.io/v1/devices/200025001847343438323536/led?access_token=83488e0ae4449156570ffe3b9c0774c826ea6166',
           {value: destination});
-          resolve(destination);
+        console.log('ABOUT TO RESOLVE!');
+        resolve(destination);
       })
       .catch(e => {
         console.log('Error: ', e)
